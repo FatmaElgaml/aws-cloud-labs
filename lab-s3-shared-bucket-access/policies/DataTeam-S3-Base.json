@@ -1,0 +1,52 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowConsoleBucketDiscovery",
+      "Effect": "Allow",
+      "Action": ["s3:ListAllMyBuckets", "s3:GetBucketLocation"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ListRootAndHomeFolder",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::anycompany-data-<ACCOUNT_ID>",
+      "Condition": {
+        "StringEquals": {
+          "s3:prefix": ["", "home/"],
+          "s3:delimiter": ["/"]
+        }
+      }
+    },
+    {
+      "Sid": "ListTeamPrefixes",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::anycompany-data-<ACCOUNT_ID>",
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": ["shared/*", "reports/*", "public/*", "home/${aws:username}/*"]
+        }
+      }
+    },
+    {
+      "Sid": "ReadWriteSharedAndOwnHome",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
+      "Resource": [
+        "arn:aws:s3:::anycompany-data-<ACCOUNT_ID>/shared/*",
+        "arn:aws:s3:::anycompany-data-<ACCOUNT_ID>/home/${aws:username}/*"
+      ]
+    },
+    {
+      "Sid": "ReadReportsAndPublic",
+      "Effect": "Allow",
+      "Action": "s3:GetObject",
+      "Resource": [
+        "arn:aws:s3:::anycompany-data-<ACCOUNT_ID>/reports/*",
+        "arn:aws:s3:::anycompany-data-<ACCOUNT_ID>/public/*"
+      ]
+    }
+  ]
+}
